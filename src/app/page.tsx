@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import BudgetForm from "@/_components/BudgetForm";
+import SummaryCards from "@/_components/SummaryCards";
+import TransactionList from "@/_components/TransactionList";
 import { BudgetItem } from "@/types/budget";
 import { loadFromStorage, saveToStorage } from "@/lib/storage";
-import { FaPlusCircle, FaMoneyBillWave, FaMoneyCheckAlt } from "react-icons/fa";
+import { FaWallet } from "react-icons/fa";
 
 export default function Home() {
   const [items, setItems] = useState<BudgetItem[]>([]);
@@ -20,67 +22,57 @@ export default function Home() {
     saveToStorage(newItems);
   };
 
+  const handleDelete = (id: string) => {
+    const updatedItems = items.filter((item) => item.id !== id);
+    setItems(updatedItems);
+    saveToStorage(updatedItems); // Update storage if necessary
+  };
+
+  // Calculate income, expense, and balance based on the current items
+  const income = items
+    .filter((i) => i.type === "income")
+    .reduce((a, b) => a + b.amount, 0);
+  const expense = items
+    .filter((i) => i.type === "expense")
+    .reduce((a, b) => a + b.amount, 0);
+  const balance = income - expense;
+
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-tr from-blue-50 to-white text-gray-800">
-      <div className="w-full max-w-2xl p-8 md:p-12 space-y-10 bg-white rounded-2xl shadow-xl border border-gray-200">
-        {/* Header */}
-        <div className="text-center space-y-3">
-          <h1 className="text-4xl font-extrabold text-blue-700 tracking-tight leading-tight">
-            📊 Budget Planner
-          </h1>
-          <p className="text-gray-600 text-base text-center leading-relaxed">
-            Catat dan kelola keuangan pribadi kamu dengan cepat &amp; mudah.
-          </p>
-        </div>
-
-        {/* Form Input */}
-        <BudgetForm onAdd={handleAdd} />
-
-        {/* List Transaksi */}
-        {items.length === 0 ? (
-          <div className="rounded-xl border border-dashed p-8 text-center text-base text-gray-500 flex flex-col items-center space-y-4">
-            <FaPlusCircle className="text-3xl" />
-            <span>
-              Belum ada data transaksi. Silakan tambahkan dari form di atas.
-            </span>
+    <main className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 flex items-start justify-center py-10 px-4 sm:px-6">
+      <div className="w-full max-w-3xl bg-white border border-gray-200 shadow-lg rounded-2xl overflow-hidden">
+        <section className="bg-white rounded-2xl overflow-hidden">
+          {/* Header */}
+          <div className="relative h-[140px] bg-gradient-to-r from-[#4361ee] to-[#3f37c9] text-white text-center px-6 flex flex-col items-center justify-center">
+            <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center gap-3">
+              <FaWallet className="text-2xl" /> Budget Planner
+            </h1>
+            <p className="text-sm md:text-base opacity-90 mt-2">
+              Take control of your finances with our powerful budgeting tool
+            </p>
+            {/* header::after mimic */}
+            <div className="absolute bottom-0 left-0 w-full h-8 bg-white rounded-t-2xl z-0" />
           </div>
-        ) : (
-          <div className="space-y-6">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between items-center p-6 rounded-lg border shadow-sm bg-gray-50 hover:bg-gray-100 transition duration-200"
-              >
-                <div className="flex items-center gap-4">
-                  {item.type === "income" ? (
-                    <FaMoneyBillWave
-                      className="text-green-600 flex-shrink-0"
-                      size={28}
-                    />
-                  ) : (
-                    <FaMoneyCheckAlt
-                      className="text-red-500 flex-shrink-0"
-                      size={28}
-                    />
-                  )}
-                  <div>
-                    <p className="font-semibold text-lg">{item.name}</p>
-                    <p className="text-sm text-gray-500">
-                      {item.type === "income" ? "Pemasukan" : "Pengeluaran"}
-                    </p>
-                  </div>
-                </div>
-                <p
-                  className={`font-bold text-xl ${
-                    item.type === "income" ? "text-green-600" : "text-red-500"
-                  }`}
-                >
-                  Rp{item.amount.toLocaleString("id-ID")}
-                </p>
-              </div>
-            ))}
+          {/* Content Container */}
+          <div className="flex flex-col space-y-10">
+            {/* BudgetForm */}
+            <div className="border border-gray-300 bg-white rounded-xl shadow-sm p-6 md:p-8">
+              <BudgetForm onAdd={handleAdd} />
+            </div>
+            {/* Summary */}
+            <div className="border border-gray-300 bg-white rounded-xl shadow-sm p-6 md:p-8">
+              <SummaryCards
+                income={income}
+                expense={expense}
+                balance={balance}
+              />
+            </div>
+
+            {/* Transaction List */}
+            <div className="border border-gray-300 bg-white rounded-xl shadow-sm p-6 md:p-8">
+              <TransactionList items={items} onDelete={handleDelete} />
+            </div>
           </div>
-        )}
+        </section>
       </div>
     </main>
   );
