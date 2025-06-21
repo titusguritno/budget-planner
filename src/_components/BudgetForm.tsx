@@ -29,7 +29,11 @@ export default function BudgetForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !amount.trim() || !date) return;
+
+    if (!name.trim() || !amount.trim() || !date) {
+      toast.error("Harap isi semua data transaksi terlebih dahulu!");
+      return;
+    }
 
     const newItem: BudgetItem = {
       id: crypto.randomUUID(),
@@ -49,31 +53,33 @@ export default function BudgetForm({
   };
 
   return (
-    <Card className="w-full rounded-xl border bg-white shadow-md p-6 md:p-8">
-      <form onSubmit={handleSubmit} className="space-y-8">
+    <Card className="w-full max-w-2xl mx-auto rounded-xl border bg-white shadow-md px-6 py-8">
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Judul Form */}
         <div className="flex items-center gap-2 text-lg font-semibold">
           <FaPlusCircle className="text-primary" />
-          Add New Transaction
+          Tambahkan Transaksi Baru
         </div>
 
         {/* Input Deskripsi & Jumlah */}
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col md:flex-row gap-4">
           <Input
-            placeholder="Description"
+            placeholder="Contoh: gaji, belanja, dll"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            className="w-full"
           />
           <Input
             type="number"
-            placeholder="Amount"
+            placeholder="Jumlah"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
+            className="w-full"
           />
         </div>
 
         {/* Toggle & Date */}
-        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
           <div className="flex bg-gray-100 rounded-md overflow-hidden">
             <button
               type="button"
@@ -82,7 +88,7 @@ export default function BudgetForm({
                 type === "income" ? "bg-[#4361ee] text-white" : "text-gray-700"
               }`}
             >
-              Income
+              Pemasukan
             </button>
             <button
               type="button"
@@ -91,7 +97,7 @@ export default function BudgetForm({
                 type === "expense" ? "bg-[#4361ee] text-white" : "text-gray-700"
               }`}
             >
-              Expense
+              Pengeluaran
             </button>
           </div>
 
@@ -100,11 +106,11 @@ export default function BudgetForm({
               <Button
                 variant="outline"
                 className={cn(
-                  "md:max-w-xs w-full justify-between text-left text-sm font-normal",
+                  "w-full md:w-60 justify-between text-left text-sm font-normal",
                   !date && "text-muted-foreground"
                 )}
               >
-                {date ? format(date, "dd/MM/yyyy") : <span>Select date</span>}
+                {date ? format(date, "dd/MM/yyyy") : <span>Pilih tanggal</span>}
                 <FaCalendarAlt className="ml-2 opacity-70" />
               </Button>
             </PopoverTrigger>
@@ -115,15 +121,16 @@ export default function BudgetForm({
         </div>
 
         {/* Tombol Submit */}
-        <Button
-          type="submit"
-          className=" flex items-center gap-2 px-6 py-4 text-base font-semibold text-white
-             bg-gradient-to-r from-[#4361ee] to-[#3f37c9] border border-[#3f37c9] 
-             rounded-md hover:opacity-90 transition"
-        >
-          <FaPlusCircle className="text-lg" />
-          Add Transaction
-        </Button>
+        <div className="pt-2">
+          <Button
+            type="submit"
+            className="w-full md:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-[#4361ee] to-[#3f37c9]
+        text-white text-sm font-semibold uppercase rounded-md px-6 py-3 hover:opacity-90 transition"
+          >
+            <FaPlusCircle className="text-base" />
+            Simpan Transaksi
+          </Button>
+        </div>
       </form>
     </Card>
   );

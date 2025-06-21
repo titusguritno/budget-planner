@@ -7,6 +7,7 @@ import TransactionList from "@/_components/TransactionList";
 import { BudgetItem } from "@/types/budget";
 import { loadFromStorage, saveToStorage } from "@/lib/storage";
 import { FaWallet } from "react-icons/fa";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
   const [items, setItems] = useState<BudgetItem[]>([]);
@@ -44,32 +45,41 @@ export default function Home() {
           {/* Header */}
           <div className="relative h-[140px] bg-gradient-to-r from-[#4361ee] to-[#3f37c9] text-white text-center px-6 flex flex-col items-center justify-center">
             <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center gap-3">
-              <FaWallet className="text-2xl" /> Budget Planner
+              <FaWallet className="text-2xl" /> Catatan Keuangan
             </h1>
             <p className="text-sm md:text-base opacity-90 mt-2">
-              Take control of your finances with our powerful budgeting tool
+              Catat dan kendalikan keuangan mu dengan mudah
             </p>
-            {/* header::after mimic */}
             <div className="absolute bottom-0 left-0 w-full h-8 bg-white rounded-t-2xl z-0" />
           </div>
-          {/* Content Container */}
-          <div className="flex flex-col space-y-10">
-            {/* BudgetForm */}
-            <div className="border border-gray-300 bg-white rounded-xl shadow-sm p-6 md:p-8">
-              <BudgetForm onAdd={handleAdd} />
-            </div>
-            {/* Summary */}
-            <div className="border border-gray-300 bg-white rounded-xl shadow-sm p-6 md:p-8">
-              <SummaryCards
-                income={income}
-                expense={expense}
-                balance={balance}
-              />
-            </div>
 
-            {/* Transaction List */}
-            <div className="border border-gray-300 bg-white rounded-xl shadow-sm p-6 md:p-8">
-              <TransactionList items={items} onDelete={handleDelete} />
+          {/* Content Container */}
+          <div className="pt-10 pb-12 px-6 md:px-8 bg-white relative z-10">
+            <div className="w-full flex flex-col gap-10 items-center">
+              {/* Budget Form */}
+              <Card className="w-full max-w-2xl">
+                <CardContent className="p-6 md:p-8">
+                  <BudgetForm onAdd={handleAdd} />
+                </CardContent>
+              </Card>
+
+              {/* Summary Cards */}
+              <Card className="w-full max-w-2xl">
+                <CardContent className="p-6 md:p-8">
+                  <SummaryCards
+                    income={income}
+                    expense={expense}
+                    balance={balance}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Transaction List */}
+              <Card className="w-full max-w-2xl">
+                <CardContent className="p-6 md:p-8">
+                  <TransactionList items={items} onDelete={handleDelete} />
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
